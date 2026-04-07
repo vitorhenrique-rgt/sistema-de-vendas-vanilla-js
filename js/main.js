@@ -4,7 +4,25 @@ const productDescription = document.getElementById('product-description')
 const productCost = document.getElementById('product-cost')
 const productPrice = document.getElementById('product-price')
 
+const productList = document.querySelector('#product-list tbody')
+
 let products = []
+
+function showProductList() {
+  const productItems = products.map((product, index) => {
+    return `
+    <tr>
+      <td>${index + 1}</td>
+      <td>${product.name}</td>
+      <td>${product.description}</td>
+      <td>${product.cost.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+      <td>${product.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+    </tr>
+    `
+  }).join('')
+
+  productList.innerHTML = productItems
+}
 
 function addProduct() {
   if (productName.value === "" || productCost.value === "" || productPrice.value === "") {
@@ -18,6 +36,7 @@ function addProduct() {
       price: Number(productPrice.value)
     }
     products.push(product)
+    showProductList()
     console.log(products)
   }
 }
@@ -34,5 +53,6 @@ productForm.addEventListener('submit', (e) => {
   cleanProductForm()
 })
 
+showProductList()
 
 
