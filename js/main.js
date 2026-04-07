@@ -6,6 +6,8 @@ const productPrice = document.getElementById('product-price')
 
 const productList = document.querySelector('#product-list tbody')
 
+const productTable = document.getElementById('product-table')
+
 let products = []
 
 function showProductList() {
@@ -17,6 +19,7 @@ function showProductList() {
       <td>${product.description}</td>
       <td>${product.cost.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
       <td>${product.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+      <td><button class="delete-product-btn" data-id="${product.id}" onclick="deleteProduct()">Deletar</button></td>
     </tr>
     `
   }).join('')
@@ -37,8 +40,20 @@ function addProduct() {
     }
     products.push(product)
     showProductList()
-    console.log(products)
   }
+}
+
+productTable.addEventListener('click', e => {
+  if (e.target.classList.contains('delete-product-btn')) {
+    const id = e.target.dataset.id
+    deleteProduct(id)
+  }
+})
+
+function deleteProduct(id) {
+  const updatedProducts = products.filter(product => product.id !== id)
+  products = updatedProducts
+  showProductList()
 }
 
 function cleanProductForm() {
@@ -47,11 +62,16 @@ function cleanProductForm() {
   productCost.value = ""
   productPrice.value = ""
 }
+
+
+
 productForm.addEventListener('submit', (e) => {
   e.preventDefault()
   addProduct()
   cleanProductForm()
 })
+
+
 
 showProductList()
 
