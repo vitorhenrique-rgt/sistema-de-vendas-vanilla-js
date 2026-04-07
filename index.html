@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="stylesheet" href="css/style.css">
   <script src="js/main.js" defer></script>
-  <title>Sistema de Vendas</title>
+  <title>Sistema de Vendas - Vanilla JS</title>
 </head>
 
 <body>
@@ -36,7 +36,26 @@
     </div>
     <div id="products">
       <section id="product-regitration">
-        Cadastro de Produtos
+         <form action="" id="product-form">
+        <fieldset>
+          <legend>Adicionar Produto</legend>
+
+          <label for="name">Nome</label>
+          <input type="text" name="name" id="product-name" required>
+
+          <label for="description">Descrição</label>
+          <input type="text" name="description" id="product-description">
+
+          <label for="cost">Custo</label>
+          <input type="number" name="cost" id="product-cost" step="0.01" required>
+
+          <label for="price">Preço</label>
+          <input type="number" name="price" id="product-price" step="0.01" required>
+
+          <input type="submit" value="Cadastrar" id="product-submit">
+
+        </fieldset>
+      </form>
       </section>
       <section id="product-list">
         Lista de Produtos
