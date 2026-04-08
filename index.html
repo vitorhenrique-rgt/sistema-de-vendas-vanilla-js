@@ -39,6 +39,7 @@
         <form action="" id="product-form">
           <fieldset>
             <legend>Adicionar Produto</legend>
+            <input type="text" name="id" id="product-id" data-id="" hidden>
 
             <label for="name">Nome</label>
             <input type="text" name="name" id="product-name" required>
@@ -66,7 +67,7 @@
               <th>Descrição</th>
               <th>Custo</th>
               <th>Preço</th>
-              <th>Ações</th>
+              <th colspan="2">Ações</th>
             </tr>
           </thead>
           <tbody>

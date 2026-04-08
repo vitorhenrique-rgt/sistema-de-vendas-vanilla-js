@@ -1,17 +1,17 @@
 const productForm = document.getElementById('product-form')
-const productName = document.getElementById('product-name')
-const productDescription = document.getElementById('product-description')
-const productCost = document.getElementById('product-cost')
-const productPrice = document.getElementById('product-price')
-
-const productList = document.querySelector('#product-list tbody')
-
+const productIdInput = document.getElementById('product-id')
+const productNameInput = document.getElementById('product-name')
+const productDescriptionInput = document.getElementById('product-description')
+const productCostInput = document.getElementById('product-cost')
+const productPriceInput = document.getElementById('product-price')
 const productTable = document.getElementById('product-table')
+const productTableList = productTable.querySelector('tbody')
 
-let products = []
+let productsArray = []
 
+//SHOW PRODUCTS
 function showProductList() {
-  const productItems = products.map((product, index) => {
+  const productItems = productsArray.map((product, index) => {
     return `
     <tr>
       <td>${index + 1}</td>
@@ -19,58 +19,89 @@ function showProductList() {
       <td>${product.description}</td>
       <td>${product.cost.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
       <td>${product.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-      <td><button class="delete-product-btn" data-id="${product.id}" onclick="deleteProduct()">Deletar</button></td>
+      <td><button class="delete-product-btn" data-id="${product.id}">Deletar</button></td>
+      <td><button class="update-product-btn" data-id="${product.id}">Alterar</button></td>
     </tr>
     `
   }).join('')
 
-  productList.innerHTML = productItems
+  productTableList.innerHTML = productItems
 }
 
-function addProduct() {
-  if (productName.value === "" || productCost.value === "" || productPrice.value === "") {
+
+//ADD AND UPDATE PRODUCT
+function saveProduct(id) {
+  if (productNameInput.value === "" || productCostInput.value === "" || productPriceInput.value === "") {
     console.log("Campos Obrigatórios")
   } else {
-    const product = {
-      id: crypto.randomUUID(),
-      name: productName.value,
-      description: productDescription.value,
-      cost: Number(productCost.value),
-      price: Number(productPrice.value)
+    if (id === "") {
+      const product = {
+        id: crypto.randomUUID(),
+        name: productNameInput.value,
+        description: productDescriptionInput.value,
+        cost: Number(productCostInput.value),
+        price: Number(productPriceInput.value)
+      }
+      productsArray.push(product)
+    } else {
+      const updatedProducts = productsArray.map(product =>
+        product.id === id ? {
+          ...product, name: productNameInput.value,
+          description: productDescriptionInput.value,
+          cost: Number(productCostInput.value),
+          price: Number(productPriceInput.value)
+        } : product
+      )
+      productsArray = updatedProducts
     }
-    products.push(product)
     showProductList()
   }
 }
 
+
+//DELETE PRODUCT
+function deleteProduct(id) {
+  const updatedProducts = productsArray.filter(product => product.id !== id)
+  productsArray = updatedProducts
+  showProductList()
+}
+
+
+//UTILITY FUNCTIONS
+function cleanProductForm() {
+  productIdInput.dataset.id = ""
+  productNameInput.value = ""
+  productDescriptionInput.value = ""
+  productCostInput.value = ""
+  productPriceInput.value = ""
+}
+
+function updateProductInput(id) {
+  const product = productsArray.find(product => product.id === id)
+  productIdInput.dataset.id = product.id
+  productNameInput.value = product.name
+  productDescriptionInput.value = product.description
+  productCostInput.value = product.cost
+  productPriceInput.value = product.price
+}
+
+
+//EVENT LISTENERS
 productTable.addEventListener('click', e => {
   if (e.target.classList.contains('delete-product-btn')) {
     const id = e.target.dataset.id
     deleteProduct(id)
+  } else if (e.target.classList.contains('update-product-btn')) {
+    const id = e.target.dataset.id
+    updateProductInput(id)
   }
 })
 
-function deleteProduct(id) {
-  const updatedProducts = products.filter(product => product.id !== id)
-  products = updatedProducts
-  showProductList()
-}
-
-function cleanProductForm() {
-  productName.value = ""
-  productDescription.value = ""
-  productCost.value = ""
-  productPrice.value = ""
-}
-
-
-
 productForm.addEventListener('submit', (e) => {
   e.preventDefault()
-  addProduct()
+  saveProduct(productIdInput.dataset.id)
   cleanProductForm()
 })
-
 
 
 showProductList()
