@@ -1,5 +1,4 @@
 const productForm = document.getElementById('product-form')
-const productIdInput = document.getElementById('product-id')
 const productNameInput = document.getElementById('product-name')
 const productDescriptionInput = document.getElementById('product-description')
 const productCostInput = document.getElementById('product-cost')
@@ -8,6 +7,8 @@ const productTable = document.getElementById('product-table')
 const productTableList = productTable.querySelector('tbody')
 
 let productsArray = []
+let productId = null
+let cart = [{ productId: 1, quantity: 1, unitPrice: 10 }, { productId: 2, quantity: 2, unitPrice: 20 }, { productId: 3, quantity: 1, unitPrice: 15 }]
 
 //SHOW PRODUCTS
 function showProductList() {
@@ -21,6 +22,7 @@ function showProductList() {
       <td>${product.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
       <td><button class="delete-product-btn" data-id="${product.id}">Deletar</button></td>
       <td><button class="update-product-btn" data-id="${product.id}">Alterar</button></td>
+      <td><button class="add-product-btn" data-id="${product.id}">Adicionar</button></td>
     </tr>
     `
   }).join('')
@@ -34,7 +36,7 @@ function saveProduct(id) {
   if (productNameInput.value === "" || productCostInput.value === "" || productPriceInput.value === "") {
     console.log("Campos Obrigatórios")
   } else {
-    if (id === "") {
+    if (id === null) {
       const product = {
         id: crypto.randomUUID(),
         name: productNameInput.value,
@@ -69,7 +71,7 @@ function deleteProduct(id) {
 
 //UTILITY FUNCTIONS
 function cleanProductForm() {
-  productIdInput.dataset.id = ""
+  productId = null
   productNameInput.value = ""
   productDescriptionInput.value = ""
   productCostInput.value = ""
@@ -78,7 +80,6 @@ function cleanProductForm() {
 
 function updateProductInput(id) {
   const product = productsArray.find(product => product.id === id)
-  productIdInput.dataset.id = product.id
   productNameInput.value = product.name
   productDescriptionInput.value = product.description
   productCostInput.value = product.cost
@@ -86,20 +87,41 @@ function updateProductInput(id) {
 }
 
 
+//ADD ITEM CART
+function addItemCart(productId, quantity) {
+  productAdded = productsArray.find(product => product.id === productId)
+  console.log(productAdded);
+  const index = cart.findIndex(item => item.productId === productId)
+  if (index < 0) {
+    const productItem = {
+      productId: productId,
+      quantity: quantity,
+      unitPrice: productAdded.price
+    }
+    cart.push(productItem)
+  } else {
+    const updatedCart = cart.map(item => item.productId === productId ? { ...item, quantity: item.quantity + quantity } : item)
+    cart = updatedCart
+  }
+}
+
 //EVENT LISTENERS
 productTable.addEventListener('click', e => {
   if (e.target.classList.contains('delete-product-btn')) {
     const id = e.target.dataset.id
     deleteProduct(id)
   } else if (e.target.classList.contains('update-product-btn')) {
+    productId = e.target.dataset.id
+    updateProductInput(productId)
+  } else if (e.target.classList.contains('add-product-btn')) {
     const id = e.target.dataset.id
-    updateProductInput(id)
+    addItemCart(id, 1)
   }
 })
 
 productForm.addEventListener('submit', (e) => {
   e.preventDefault()
-  saveProduct(productIdInput.dataset.id)
+  saveProduct(productId)
   cleanProductForm()
 })
 
