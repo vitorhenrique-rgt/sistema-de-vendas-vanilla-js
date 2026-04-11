@@ -126,7 +126,7 @@ function updateProductInput(id) {
 
 //ADD ITEM CART
 function addItemCart(productId, quantity) {
-  productAdded = productsArray.find(product => product.id === productId)
+  const productAdded = productsArray.find(product => product.id === productId)
   const index = cart.findIndex(item => item.productId === productId)
   if (index < 0) {
     const productItem = {
@@ -146,7 +146,6 @@ function addItemCart(productId, quantity) {
 function showCart() {
   const cartItems = cart.map((item, index) => {
     const product = productsArray.find(itemProduct => itemProduct.id === item.productId)
-    console.log(product)
     return `
     <tr>
       <td>${index + 1}</td>
@@ -154,7 +153,7 @@ function showCart() {
       <td>${item.quantity}</td>
       <td>${item.unitPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
       <td>${(item.unitPrice * item.quantity).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-      <td><button class="delete-item-cart-btn" data-id="${index}">Deletar</button></td>
+      <td><button class="delete-item-cart-btn" data-id="${item.productId}">Deletar</button></td>
     </tr>
     `
   }).join('')
