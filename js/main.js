@@ -5,7 +5,7 @@ const productCostInput = document.getElementById('product-cost')
 const productPriceInput = document.getElementById('product-price')
 const productTable = document.getElementById('product-table')
 const productTableList = productTable.querySelector('tbody')
-const cartItemsTable = document.querySelector("#cart-items-table tbody")
+const cartTableList = document.querySelector("#cart-items-table tbody")
 
 let productsArray = [
   {
@@ -46,6 +46,9 @@ let productsArray = [
 ];
 let productId = null
 let cart = []
+
+
+//-----------------------PRODUCTS-----------------------
 
 //SHOW PRODUCTS
 function showProductList() {
@@ -106,6 +109,65 @@ function deleteProduct(id) {
 }
 
 
+//-----------------------CART-----------------------
+
+//ADD ITEM CART
+function addItemCart(productId, quantity) {
+  const productFound = productsArray.find(product => product.id === productId)
+  const index = cart.findIndex(item => item.productId === productId)
+  if (index < 0) {
+    const productItem = {
+      productId: productId,
+      quantity: quantity,
+      unitPrice: productFound.price
+    }
+    cart.push(productItem)
+  } else {
+    const updatedCart = cart.map(item => item.productId === productId ? { ...item, quantity: item.quantity + quantity } : item)
+    cart = updatedCart
+  }
+  showCart()
+}
+
+//DELETE ITEM CART
+function deleteItemCart(id) {
+  const updatedCart = cart.filter(item => item.productId !== id)
+  cart = updatedCart
+  showCart()
+}
+
+//SHOW CART
+function showCart() {
+  const totalValue = cart.reduce((acc, item) => acc + (item.quantity * item.unitPrice), 0)
+  const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0)
+  const totalsRow = `
+  <tr>
+  <td colspan="3">Total</td>
+  <td>${totalItems}</td>
+  <td>${totalValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+  <td></td>
+  </tr>
+  `
+  const cartItems = cart.map((item, index) => {
+    const product = productsArray.find(itemProduct => itemProduct.id === item.productId)
+    return `
+    <tr>
+      <td>${index + 1}</td>
+      <td>${product.name}</td>
+      <td>${item.unitPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+      <td>${item.quantity}</td>
+      <td>${(item.unitPrice * item.quantity).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+      <td><button class="delete-item-cart-btn" data-id="${item.productId}">Remover</button></td>
+      <td><button class="add-item-cart-btn" data-id="${item.productId}">Adicionar</button></td>
+    </tr>
+    `
+  }).join('')
+
+  cartTableList.innerHTML = cartItems + totalsRow
+}
+
+//-----------------------UTILITY AND EVENTS-----------------------
+
 //UTILITY FUNCTIONS
 function cleanProductForm() {
   productId = null
@@ -124,44 +186,17 @@ function updateProductInput(id) {
 }
 
 
-//ADD ITEM CART
-function addItemCart(productId, quantity) {
-  const productAdded = productsArray.find(product => product.id === productId)
-  const index = cart.findIndex(item => item.productId === productId)
-  if (index < 0) {
-    const productItem = {
-      productId: productId,
-      quantity: quantity,
-      unitPrice: productAdded.price
-    }
-    cart.push(productItem)
-  } else {
-    const updatedCart = cart.map(item => item.productId === productId ? { ...item, quantity: item.quantity + quantity } : item)
-    cart = updatedCart
-  }
-  showCart()
-}
-
-//SHOW CART
-function showCart() {
-  const cartItems = cart.map((item, index) => {
-    const product = productsArray.find(itemProduct => itemProduct.id === item.productId)
-    return `
-    <tr>
-      <td>${index + 1}</td>
-      <td>${product.name}</td>
-      <td>${item.quantity}</td>
-      <td>${item.unitPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-      <td>${(item.unitPrice * item.quantity).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-      <td><button class="delete-item-cart-btn" data-id="${item.productId}">Deletar</button></td>
-    </tr>
-    `
-  }).join('')
-
-  cartItemsTable.innerHTML = cartItems
-}
-
 //EVENT LISTENERS
+cartTableList.addEventListener('click', e => {
+  if (e.target.classList.contains('delete-item-cart-btn')) {
+    const id = e.target.dataset.id
+    deleteItemCart(id)
+  } else if (e.target.classList.contains('add-item-cart-btn')) {
+    const id = e.target.dataset.id
+    addItemCart(id, 1)
+  }
+})
+
 productTable.addEventListener('click', e => {
   if (e.target.classList.contains('delete-product-btn')) {
     const id = e.target.dataset.id
