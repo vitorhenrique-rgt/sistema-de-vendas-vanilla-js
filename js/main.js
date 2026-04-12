@@ -7,7 +7,7 @@ const productTable = document.getElementById('product-table')
 const productTableList = productTable.querySelector('tbody')
 const cartTableList = document.querySelector("#cart-items-table tbody")
 
-let productsArray = [
+let products = [
   {
     id: "prod-8821-xpta",
     name: "Teclado Mecânico RGB",
@@ -44,15 +44,15 @@ let productsArray = [
     price: 540.00
   }
 ];
-let productId = null
+let editingProductId = null
 let cart = []
 
 
 //-----------------------PRODUCTS-----------------------
 
 //SHOW PRODUCTS
-function showProductList() {
-  const productItems = productsArray.map((product, index) => {
+function renderProductList() {
+  const productItems = products.map((product, index) => {
     return `
     <tr>
       <td>${index + 1}</td>
@@ -84,9 +84,9 @@ function saveProduct(id) {
         cost: Number(productCostInput.value),
         price: Number(productPriceInput.value)
       }
-      productsArray.push(product)
+      products.push(product)
     } else {
-      const updatedProducts = productsArray.map(product =>
+      const updatedProducts = products.map(product =>
         product.id === id ? {
           ...product, name: productNameInput.value,
           description: productDescriptionInput.value,
@@ -94,50 +94,55 @@ function saveProduct(id) {
           price: Number(productPriceInput.value)
         } : product
       )
-      productsArray = updatedProducts
+      products = updatedProducts
     }
-    showProductList()
+    renderProductList()
   }
 }
 
 
 //DELETE PRODUCT
 function deleteProduct(id) {
-  const updatedProducts = productsArray.filter(product => product.id !== id)
-  productsArray = updatedProducts
-  showProductList()
+  const updatedProducts = products.filter(product => product.id !== id)
+  products = updatedProducts
+  renderProductList()
+}
+
+//FIND PRODUCT
+function findProduct(productId) {
+  const productFound = products.find(product => product.id === productId)
+  return productFound
 }
 
 
 //-----------------------CART-----------------------
 
-//ADD ITEM CART
-function addItemCart(productId, quantity) {
-  const productFound = productsArray.find(product => product.id === productId)
+//ADD ITEM TO CART
+function addItemToCart(productId, quantity) {
   const index = cart.findIndex(item => item.productId === productId)
   if (index < 0) {
     const productItem = {
       productId: productId,
       quantity: quantity,
-      unitPrice: productFound.price
+      unitPrice: findProduct(productId).price
     }
     cart.push(productItem)
   } else {
     const updatedCart = cart.map(item => item.productId === productId ? { ...item, quantity: item.quantity + quantity } : item)
     cart = updatedCart
   }
-  showCart()
+  renderCart()
 }
 
-//DELETE ITEM CART
-function deleteItemCart(id) {
+//REMOVE ITEM CART
+function removeItemCart(id) {
   const updatedCart = cart.filter(item => item.productId !== id)
   cart = updatedCart
-  showCart()
+  renderCart()
 }
 
-//SHOW CART
-function showCart() {
+//RENDER CART
+function renderCart() {
   const totalValue = cart.reduce((acc, item) => acc + (item.quantity * item.unitPrice), 0)
   const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0)
   const totalsRow = `
@@ -149,7 +154,7 @@ function showCart() {
   </tr>
   `
   const cartItems = cart.map((item, index) => {
-    const product = productsArray.find(itemProduct => itemProduct.id === item.productId)
+    const product = products.find(itemProduct => itemProduct.id === item.productId)
     return `
     <tr>
       <td>${index + 1}</td>
@@ -170,15 +175,15 @@ function showCart() {
 
 //UTILITY FUNCTIONS
 function cleanProductForm() {
-  productId = null
+  editingProductId = null
   productNameInput.value = ""
   productDescriptionInput.value = ""
   productCostInput.value = ""
   productPriceInput.value = ""
 }
 
-function updateProductInput(id) {
-  const product = productsArray.find(product => product.id === id)
+function fillProductForm(id) {
+  const product = products.find(product => product.id === id)
   productNameInput.value = product.name
   productDescriptionInput.value = product.description
   productCostInput.value = product.cost
@@ -186,37 +191,41 @@ function updateProductInput(id) {
 }
 
 
-//EVENT LISTENERS
+//----------------------EVENT LISTENERS-------------------------------
+
+//LISTENER CART TABLE
 cartTableList.addEventListener('click', e => {
   if (e.target.classList.contains('delete-item-cart-btn')) {
     const id = e.target.dataset.id
-    deleteItemCart(id)
+    removeItemCart(id)
   } else if (e.target.classList.contains('add-item-cart-btn')) {
     const id = e.target.dataset.id
-    addItemCart(id, 1)
+    addItemToCart(id, 1)
   }
 })
 
+//LISTENER PRODUCT TABLE
 productTable.addEventListener('click', e => {
   if (e.target.classList.contains('delete-product-btn')) {
     const id = e.target.dataset.id
     deleteProduct(id)
   } else if (e.target.classList.contains('update-product-btn')) {
-    productId = e.target.dataset.id
-    updateProductInput(productId)
+    editingProductId = e.target.dataset.id
+    fillProductForm(editingProductId)
   } else if (e.target.classList.contains('add-product-btn')) {
     const id = e.target.dataset.id
-    addItemCart(id, 1)
+    addItemToCart(id, 1)
   }
 })
 
+//LISTENER PRODUCT FORM
 productForm.addEventListener('submit', (e) => {
   e.preventDefault()
-  saveProduct(productId)
+  saveProduct(editingProductId)
   cleanProductForm()
 })
 
 
-showProductList()
+renderProductList()
 
 
