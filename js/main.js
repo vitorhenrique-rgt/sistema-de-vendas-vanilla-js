@@ -46,10 +46,10 @@ let products = [
 ];
 let editingProductId = null
 let cart = { totalItems: 0, totalValue: 0, items: [] }
+let sales = []
 
 
 //-----------------------PRODUCTS-----------------------
-
 //ADD PRODUCT
 function addProduct() {
   const product = {
@@ -125,7 +125,6 @@ function renderProductList() {
 
 
 //-----------------------CART-----------------------
-
 //ADD ITEM TO CART
 function addItemToCart(productId, quantity) {
   const productItem = {
@@ -188,19 +187,54 @@ function renderCart() {
   }).join('')
 
   const totalsTableRow = `
-  <tr>
+  <tr style="border-top: 2px solid black;">
   <td colspan="3">Total</td>
   <td>${cart.totalItems}</td>
   <td>${cart.totalValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-  <td></td>
+  <td><button class="add-sale-btn">Finalizar</button></td>
+  <td><button class="cancel-sale-btn">Cancelar</button></td>
   </tr>
   `
   cartTableList.innerHTML = cartItemsList + totalsTableRow
 }
 
 
-//-----------------------UTILITY AND EVENTS-----------------------
 
+//-----------------------------SALES------------------------------
+//ADD SALE
+function createSale() {
+  if (cart.items.length > 0) {
+    const saleCompleted = {
+      id: crypto.randomUUID(),
+      createdAt: new Date(),
+      total: cart.totalValue,
+      items: cart.items.map(item => {
+        const product = findProduct(item.productId)
+        return {
+          productId: item.productId,
+          productName: product.name,
+          productPrice: product.price,
+          productQuantity: item.quantity
+        }
+      })
+    }
+    sales.push(saleCompleted)
+    cleanCart()
+    renderCart()
+  } else {
+    console.log("Não há itens no carrinho")
+  }
+}
+
+//CANCEL SALE
+function cancelSale() {
+  cleanCart()
+  renderCart()
+}
+
+
+
+//-----------------------UTILITY AND EVENTS-----------------------
 //UTILITY FUNCTIONS
 function cleanProductForm() {
   editingProductId = null
@@ -218,9 +252,13 @@ function fillProductForm(id) {
   productPriceInput.value = product.price
 }
 
+function cleanCart() {
+  cart = { totalItems: 0, totalValue: 0, items: [] }
+}
+
+
 
 //----------------------EVENT LISTENERS-------------------------------
-
 //LISTENER CART TABLE
 cartTableList.addEventListener('click', e => {
   if (e.target.classList.contains('delete-item-cart-btn')) {
@@ -229,6 +267,10 @@ cartTableList.addEventListener('click', e => {
   } else if (e.target.classList.contains('add-item-cart-btn')) {
     const id = e.target.dataset.id
     handleItemCartClick(id, 1)
+  } else if (e.target.classList.contains('add-sale-btn')) {
+    createSale()
+  } else if (e.target.classList.contains('cancel-sale-btn')) {
+    cancelSale()
   }
 })
 
@@ -255,5 +297,5 @@ productForm.addEventListener('submit', (e) => {
 
 
 renderProductList()
-
+renderCart()
 
