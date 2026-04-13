@@ -45,10 +45,62 @@ let products = [
   }
 ];
 let editingProductId = null
-let cart = []
+let cart = { totalItems: 0, totalValue: 0, items: [] }
 
 
 //-----------------------PRODUCTS-----------------------
+
+//ADD PRODUCT
+function addProduct() {
+  const product = {
+    id: crypto.randomUUID(),
+    name: productNameInput.value,
+    description: productDescriptionInput.value,
+    cost: Number(productCostInput.value),
+    price: Number(productPriceInput.value)
+  }
+  products.push(product)
+}
+
+//UPDATE PRODUCT
+function updateProduct(id) {
+  const updatedProducts = products.map(product =>
+    product.id === id ? {
+      ...product, name: productNameInput.value,
+      description: productDescriptionInput.value,
+      cost: Number(productCostInput.value),
+      price: Number(productPriceInput.value)
+    } : product
+  )
+  products = updatedProducts
+}
+
+//DELETE PRODUCT
+function deleteProduct(id) {
+  const updatedProducts = products.filter(product => product.id !== id)
+  products = updatedProducts
+  renderProductList()
+}
+
+//FIND PRODUCT
+function findProduct(productId) {
+  const productFound = products.find(product => product.id === productId)
+  return productFound
+}
+
+//HANDLE PRODUCT FORM
+function handleProductFormClick(id) {
+  if (productNameInput.value === "" || productCostInput.value === "" || productPriceInput.value === "") {
+    console.log("Campos Obrigatórios")
+  } else {
+    if (id === null) {
+      addProduct()
+    } else {
+      updateProduct(id)
+    }
+    renderProductList()
+  }
+}
 
 //SHOW PRODUCTS
 function renderProductList() {
@@ -71,90 +123,57 @@ function renderProductList() {
 }
 
 
-//ADD AND UPDATE PRODUCT
-function saveProduct(id) {
-  if (productNameInput.value === "" || productCostInput.value === "" || productPriceInput.value === "") {
-    console.log("Campos Obrigatórios")
-  } else {
-    if (id === null) {
-      const product = {
-        id: crypto.randomUUID(),
-        name: productNameInput.value,
-        description: productDescriptionInput.value,
-        cost: Number(productCostInput.value),
-        price: Number(productPriceInput.value)
-      }
-      products.push(product)
-    } else {
-      const updatedProducts = products.map(product =>
-        product.id === id ? {
-          ...product, name: productNameInput.value,
-          description: productDescriptionInput.value,
-          cost: Number(productCostInput.value),
-          price: Number(productPriceInput.value)
-        } : product
-      )
-      products = updatedProducts
-    }
-    renderProductList()
-  }
-}
-
-
-//DELETE PRODUCT
-function deleteProduct(id) {
-  const updatedProducts = products.filter(product => product.id !== id)
-  products = updatedProducts
-  renderProductList()
-}
-
-//FIND PRODUCT
-function findProduct(productId) {
-  const productFound = products.find(product => product.id === productId)
-  return productFound
-}
-
 
 //-----------------------CART-----------------------
 
 //ADD ITEM TO CART
 function addItemToCart(productId, quantity) {
-  const index = cart.findIndex(item => item.productId === productId)
-  if (index < 0) {
-    const productItem = {
-      productId: productId,
-      quantity: quantity,
-      unitPrice: findProduct(productId).price
-    }
-    cart.push(productItem)
-  } else {
-    const updatedCart = cart.map(item => item.productId === productId ? { ...item, quantity: item.quantity + quantity } : item)
-    cart = updatedCart
+  const productItem = {
+    productId: productId,
+    quantity: quantity,
+    unitPrice: findProduct(productId).price
   }
-  renderCart()
+  cart.items.push(productItem)
+}
+
+// UPDATE ITEM CART
+function updateItemCart(productId, quantity) {
+  const updatedCart = cart.items.map(item => item.productId === productId ? { ...item, quantity: item.quantity + quantity } : item)
+  cart.items = updatedCart
 }
 
 //REMOVE ITEM CART
 function removeItemCart(id) {
-  const updatedCart = cart.filter(item => item.productId !== id)
-  cart = updatedCart
+  const updatedCart = cart.items.filter(item => item.productId !== id)
+  cart.items = updatedCart
+  calculateTotalsCart()
   renderCart()
 }
 
-//RENDER CART
+//CALCULATE TOTALS CART
+function calculateTotalsCart() {
+  const updatedTotalValue = cart.items.reduce((acc, item) => acc + (item.quantity * item.unitPrice), 0)
+  cart.totalValue = updatedTotalValue
+  const totalItemsUpdated = cart.items.reduce((acc, item) => acc + item.quantity, 0)
+  cart.totalItems = totalItemsUpdated
+}
+
+//HANDLE ITEM CART
+function handleItemCartClick(productId, quantity) {
+  const index = cart.items.findIndex(item => item.productId === productId)
+  if (index < 0) {
+    addItemToCart(productId, quantity)
+  } else {
+    updateItemCart(productId, quantity)
+  }
+  calculateTotalsCart()
+  renderCart()
+}
+
+//SHOW CART
 function renderCart() {
-  const totalValue = cart.reduce((acc, item) => acc + (item.quantity * item.unitPrice), 0)
-  const totalItems = cart.reduce((acc, item) => acc + item.quantity, 0)
-  const totalsRow = `
-  <tr>
-  <td colspan="3">Total</td>
-  <td>${totalItems}</td>
-  <td>${totalValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-  <td></td>
-  </tr>
-  `
-  const cartItems = cart.map((item, index) => {
-    const product = products.find(itemProduct => itemProduct.id === item.productId)
+  const cartItemsList = cart.items.map((item, index) => {
+    const product = findProduct(item.productId)
     return `
     <tr>
       <td>${index + 1}</td>
@@ -168,8 +187,17 @@ function renderCart() {
     `
   }).join('')
 
-  cartTableList.innerHTML = cartItems + totalsRow
+  const totalsTableRow = `
+  <tr>
+  <td colspan="3">Total</td>
+  <td>${cart.totalItems}</td>
+  <td>${cart.totalValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+  <td></td>
+  </tr>
+  `
+  cartTableList.innerHTML = cartItemsList + totalsTableRow
 }
+
 
 //-----------------------UTILITY AND EVENTS-----------------------
 
@@ -200,7 +228,7 @@ cartTableList.addEventListener('click', e => {
     removeItemCart(id)
   } else if (e.target.classList.contains('add-item-cart-btn')) {
     const id = e.target.dataset.id
-    addItemToCart(id, 1)
+    handleItemCartClick(id, 1)
   }
 })
 
@@ -214,14 +242,14 @@ productTable.addEventListener('click', e => {
     fillProductForm(editingProductId)
   } else if (e.target.classList.contains('add-product-btn')) {
     const id = e.target.dataset.id
-    addItemToCart(id, 1)
+    handleItemCartClick(id, 1)
   }
 })
 
 //LISTENER PRODUCT FORM
 productForm.addEventListener('submit', (e) => {
   e.preventDefault()
-  saveProduct(editingProductId)
+  handleProductFormClick(editingProductId)
   cleanProductForm()
 })
 
