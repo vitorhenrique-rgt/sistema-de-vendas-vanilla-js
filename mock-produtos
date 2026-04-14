@@ -1,0 +1,37 @@
+const productData = [
+    {
+      id: "prod-8821-xpta",
+      name: "Teclado Mecânico RGB",
+      description: "Teclado switch blue com retroiluminação customizável.",
+      cost: 150.00,
+      price: 299.90
+    },
+    {
+      id: "prod-4432-kmno",
+      name: "Mouse Gamer 12000 DPI",
+      description: "Mouse ergonômico com pesos ajustáveis e sensor óptico.",
+      cost: 80.00,
+      price: 189.00
+    },
+    {
+      id: "prod-1092-lowp",
+      name: "Monitor 24' 144Hz",
+      description: "Monitor Full HD com painel IPS e 1ms de resposta.",
+      cost: 600.00,
+      price: 1150.00
+    },
+    {
+      id: "prod-7756-qwer",
+      name: "Headset 7.1 Surround",
+      description: "Fone de ouvido com cancelamento de ruído e microfone destacável.",
+      cost: 120.00,
+      price: 320.00
+    },
+    {
+      id: "prod-3341-plmj",
+      name: "Webcam 4K Ultra HD",
+      description: "Câmera para streaming com foco automático e correção de luz.",
+      cost: 250.00,
+      price: 540.00
+    }
+  ]

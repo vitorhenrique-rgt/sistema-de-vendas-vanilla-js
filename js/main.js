@@ -7,47 +7,70 @@ const productTable = document.getElementById('product-table')
 const productTableList = productTable.querySelector('tbody')
 const cartTableList = document.querySelector("#cart-items-table tbody")
 
-let products = [
-  {
-    id: "prod-8821-xpta",
-    name: "Teclado Mecânico RGB",
-    description: "Teclado switch blue com retroiluminação customizável.",
-    cost: 150.00,
-    price: 299.90
-  },
-  {
-    id: "prod-4432-kmno",
-    name: "Mouse Gamer 12000 DPI",
-    description: "Mouse ergonômico com pesos ajustáveis e sensor óptico.",
-    cost: 80.00,
-    price: 189.00
-  },
-  {
-    id: "prod-1092-lowp",
-    name: "Monitor 24' 144Hz",
-    description: "Monitor Full HD com painel IPS e 1ms de resposta.",
-    cost: 600.00,
-    price: 1150.00
-  },
-  {
-    id: "prod-7756-qwer",
-    name: "Headset 7.1 Surround",
-    description: "Fone de ouvido com cancelamento de ruído e microfone destacável.",
-    cost: 120.00,
-    price: 320.00
-  },
-  {
-    id: "prod-3341-plmj",
-    name: "Webcam 4K Ultra HD",
-    description: "Câmera para streaming com foco automático e correção de luz.",
-    cost: 250.00,
-    price: 540.00
-  }
-];
+let products = []
 let editingProductId = null
-let cart = { totalItems: 0, totalValue: 0, items: [] }
+let cart = {}
 let sales = []
 
+
+//--------------------------DATA MANIPULATION---------------------------
+//FETCH PRODUCTS DATA
+function fetchProductsData() {
+  const productData = localStorage.getItem("productsData")
+  if (productData !== null) {
+    products = JSON.parse(productData)
+    console.log(products)
+  } else {
+    console.log("Dados não encontrados")
+  }
+}
+
+//FETCH CART DATA
+function fetchCartData() {
+  const cartData = sessionStorage.getItem("cartData")
+  if (cartData !== null) {
+    cart = JSON.parse(cartData)
+    console.log(cart)
+  } else {
+    cart = { totalItems: 0, totalValue: 0, items: [] }
+    console.log("Carrinho vazio")
+  }
+
+}
+
+//FETCH SALES DATA
+function fetchSalesData() {
+  const salesData = localStorage.getItem("salesData")
+  if (salesData !== null) {
+    sales = JSON.parse(salesData)
+    console.log(sales)
+  } else {
+    console.log("Dados não encontrados")
+  }
+
+}
+
+//PUSH DATA
+function pushData(data, nameDataBase) {
+  let dataBase
+  switch (nameDataBase) {
+    case "productsData":
+      dataBase = nameDataBase
+      break;
+    case "salesData":
+      dataBase = nameDataBase
+      break;
+    default:
+      break;
+  }
+  localStorage.setItem(dataBase, JSON.stringify(data))
+}
+
+
+//PUSH DATA CART
+function pushCartData(data) {
+  sessionStorage.setItem("cartData", JSON.stringify(data))
+}
 
 //-----------------------PRODUCTS-----------------------
 //ADD PRODUCT
@@ -60,6 +83,7 @@ function addProduct() {
     price: Number(productPriceInput.value)
   }
   products.push(product)
+  pushData(products, "productsData")
 }
 
 //UPDATE PRODUCT
@@ -73,6 +97,7 @@ function updateProduct(id) {
     } : product
   )
   products = updatedProducts
+  pushData(products, "productsData")
 }
 
 //DELETE PRODUCT
@@ -98,6 +123,7 @@ function handleProductFormClick(id) {
     } else {
       updateProduct(id)
     }
+    fetchProductsData()
     renderProductList()
   }
 }
@@ -166,6 +192,8 @@ function handleItemCartClick(productId, quantity) {
     updateItemCart(productId, quantity)
   }
   calculateTotalsCart()
+  pushCartData(cart)
+  fetchCartData()
   renderCart()
 }
 
@@ -219,7 +247,9 @@ function createSale() {
       })
     }
     sales.push(saleCompleted)
+    pushData(sales, "salesData")
     cleanCart()
+    fetchSalesData()
     renderCart()
   } else {
     console.log("Não há itens no carrinho")
@@ -229,6 +259,7 @@ function createSale() {
 //CANCEL SALE
 function cancelSale() {
   cleanCart()
+  fetchCartData()
   renderCart()
 }
 
@@ -254,6 +285,7 @@ function fillProductForm(id) {
 
 function cleanCart() {
   cart = { totalItems: 0, totalValue: 0, items: [] }
+  pushCartData(cart)
 }
 
 
@@ -294,8 +326,12 @@ productForm.addEventListener('submit', (e) => {
   handleProductFormClick(editingProductId)
   cleanProductForm()
 })
-
+fetchProductsData()
+fetchCartData()
+fetchSalesData()
 
 renderProductList()
 renderCart()
+
+
 
