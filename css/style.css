@@ -1,3 +1,775 @@
+/* ==========================================================================
+   1. VARIÁVEIS GLOBAIS E LIGHT MODE (TEMA PADRÃO)
+   ========================================================================== */
+:root {
+  /* Identidade Visual - Cores Principais */
+  --primary: #4F46E5;
+  /* Azul Índigo - Cor principal da marca */
+  --primary-hover: #4338CA;
+  /* Tom mais escuro para interações (hover) */
+  --primary-light: #EEF2FF;
+  /* Fundo suave para destaques */
+
+  /* Cores Semânticas (Feedback do Sistema) */
+  --success: #10B981;
+  /* Verde - Vendas concluídas, lucro, ok */
+  --danger: #EF4444;
+  /* Vermelho - Erros, cancelamentos, excluir */
+  --warning: #F59E0B;
+  /* Amarelo/Laranja - Alertas, pendente */
+  --info: #3B82F6;
+  /* Azul claro - Informações gerais */
+
+  /* Cores Neutras (Fundos e Textos - LIGHT MODE) */
+  --bg-base: #F3F4F6;
+  /* Fundo geral da página (cinza bem claro) */
+  --bg-surface: #FFFFFF;
+  /* Fundo de cartões, modais e containers (branco) */
+  --text-main: #111827;
+  /* Texto principal (quase preto, melhor pra leitura) */
+  --text-muted: #6B7280;
+  /* Texto secundário, legendas, placeholders */
+  --border-color: #E5E7EB;
+  /* Cor padrão para bordas e divisórias */
+
+  /* Tipografia (Usando fontes do sistema para performance) */
+  --font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  --text-xs: 0.75rem;
+  /* 12px */
+  --text-sm: 0.875rem;
+  /* 14px */
+  --text-base: 1rem;
+  /* 16px (Padrão) */
+  --text-lg: 1.125rem;
+  /* 18px */
+  --text-xl: 1.25rem;
+  /* 20px */
+  --text-2xl: 1.5rem;
+  /* 24px - Títulos */
+  --text-3xl: 1.875rem;
+  /* 30px - Títulos maiores */
+
+  /* Espaçamentos (Baseado em múltiplos de 4px/8px para consistência) */
+  --space-1: 0.25rem;
+  /* 4px */
+  --space-2: 0.5rem;
+  /* 8px */
+  --space-3: 0.75rem;
+  /* 12px */
+  --space-4: 1rem;
+  /* 16px */
+  --space-5: 1.5rem;
+  /* 24px */
+  --space-6: 2rem;
+  /* 32px */
+  --space-8: 3rem;
+  /* 48px */
+  --space-12: 4rem;
+  /* 64px */
+
+  /* Bordas e Sombras */
+  --radius-sm: 0.25rem;
+  /* 4px - Inputs, botões pequenos */
+  --radius-md: 0.5rem;
+  /* 8px - Cartões e botões padrão */
+  --radius-lg: 1rem;
+  /* 16px - Modais, containers maiores */
+  --radius-full: 9999px;
+  /* Pílulas, avatares */
+
+  --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+  --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+
+  /* Tamanhos de Container (Larguras máximas padronizadas) */
+  --container-sm: 640px;
+  --container-md: 768px;
+  --container-lg: 1024px;
+  --container-xl: 1280px;
+}
+
+/* ==========================================================================
+   2. DARK MODE (Ativado automaticamente pelas preferências do sistema)
+   ========================================================================== */
+@media (prefers-color-scheme: dark) {
+  :root {
+    /* Ajustando as cores primárias para melhor contraste no escuro */
+    --primary: #6366F1;
+    /* Índigo um pouco mais claro */
+    --primary-hover: #818CF8;
+    --primary-light: #3730A3;
+
+    /* Cores Neutras (Fundos e Textos - DARK MODE) */
+    --bg-base: #111827;
+    /* Fundo geral bem escuro */
+    --bg-surface: #1F2937;
+    /* Cartões um tom mais claros que o fundo */
+    --text-main: #F9FAFB;
+    /* Texto principal claro */
+    --text-muted: #9CA3AF;
+    /* Texto secundário escurecido */
+    --border-color: #374151;
+    /* Bordas escuras */
+
+    /* Suavizando as sombras para o dark mode */
+    --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+    --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.4);
+  }
+}
+
+/* ==========================================================================
+   3. RESET E CONFIGURAÇÕES BASE
+   ========================================================================== */
 * {
-  background-color: #ccc;
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: var(--font-family);
+  background-color: var(--bg-base);
+  color: var(--text-main);
+  font-size: var(--text-base);
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  /* Transição suave pro Dark Mode */
+}
+
+/* Remove estilos padrões indesejados */
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+  color: inherit;
+}
+
+button {
+  cursor: pointer;
+  border: none;
+  background: transparent;
+}
+
+a {
+  text-decoration: none;
+  color: var(--primary);
+}
+
+/* ==========================================================================
+   4. CLASSES UTILITÁRIAS BASE
+   ========================================================================== */
+
+/* Container padrão para centralizar o layout principal */
+.container {
+  width: 100%;
+  max-width: var(--container-xl);
+  margin-left: auto;
+  margin-right: auto;
+  padding-left: var(--space-4);
+  padding-right: var(--space-4);
+}
+
+/* ==========================================================================
+   5. DESIGN SYSTEM - COMPONENTES (ADICIONADOS)
+   ========================================================================== */
+
+/* --- 5.1 LAYOUT DA APLICAÇÃO --- */
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+.main-wrapper {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  /* Previne transbordo do flexbox */
+}
+
+.main-content {
+  flex: 1;
+  padding-top: var(--space-6);
+  padding-bottom: var(--space-8);
+}
+
+.section-block {
+  margin-bottom: var(--space-8);
+}
+
+/* --- 5.2 SIDEBAR & MENUS --- */
+.sidebar {
+  max-width: 260px;
+  background-color: var(--bg-surface);
+  border-right: 1px solid var(--border-color);
+  display: flex;
+  flex-direction: column;
+  transition: background-color 0.3s ease;
+}
+
+.sidebar-logo {
+  padding: var(--space-5) var(--space-4);
+  border-bottom: 1px solid var(--border-color);
+  color: var(--primary);
+}
+
+.sidebar-menu {
+  padding: var(--space-4) 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.menu-item {
+  padding: var(--space-3) var(--space-4);
+  color: var(--text-muted);
+  font-weight: 500;
+  transition: all 0.2s;
+  border-left: 3px solid transparent;
+}
+
+.menu-item:hover {
+  background-color: var(--bg-base);
+  color: var(--primary-hover);
+}
+
+.menu-item.active {
+  background-color: var(--primary-light);
+  color: var(--text-muted);
+  border-left-color: var(--primary);
+}
+
+/* --- 5.3 HEADER --- */
+.header {
+  background-color: var(--bg-surface);
+  border-bottom: 1px solid var(--border-color);
+  padding: 0 var(--space-6);
+  height: 64px;
+  display: flex;
+  align-items: center;
+}
+
+.header-content {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--space-4);
+}
+
+.avatar {
+  width: 40px;
+  height: 40px;
+  border-radius: var(--radius-full);
+  background-color: var(--primary);
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: bold;
+}
+
+
+/* --- 5.4 FOOTER --- */
+.footer {
+  padding: var(--space-5);
+  background-color: var(--bg-surface);
+  border-top: 1px solid var(--border-color);
+}
+
+/* --- 5.5 TIPOGRAFIA E TEXTOS --- */
+.h1 {
+  font-size: var(--text-3xl);
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: var(--space-2);
+}
+
+.h2 {
+  font-size: var(--text-2xl);
+  font-weight: 700;
+  color: var(--text-main);
+  margin-bottom: var(--space-2);
+}
+
+.h3 {
+  font-size: var(--text-xl);
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: var(--space-2);
+}
+
+.h4 {
+  font-size: var(--text-lg);
+  font-weight: 600;
+  color: var(--text-main);
+  margin-bottom: var(--space-1);
+}
+
+.h5 {
+  font-size: var(--text-base);
+  font-weight: 600;
+}
+
+.text-main {
+  color: var(--text-main);
+}
+
+.text-muted {
+  color: var(--text-muted);
+}
+
+.text-sm {
+  font-size: var(--text-sm);
+}
+
+.text-base {
+  font-size: var(--text-base);
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+.divider {
+  border: 0;
+  border-top: 1px solid var(--border-color);
+  margin: var(--space-3) 0 var(--space-5) 0;
+}
+
+/* --- 5.6 CARDS --- */
+.card {
+  background-color: var(--bg-surface);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--border-color);
+  overflow: hidden;
+  transition: box-shadow 0.2s ease;
+}
+
+.card:hover {
+  box-shadow: var(--shadow-md);
+}
+
+.card-header {
+  padding: var(--space-4) var(--space-5);
+  border-bottom: 1px solid var(--border-color);
+  background-color: transparent;
+}
+
+.card-body {
+  padding: var(--space-5);
+}
+
+.card-footer {
+  padding: var(--space-4) var(--space-5);
+  border-top: 1px solid var(--border-color);
+  background-color: var(--bg-base);
+  /* Leve destaque no footer */
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* --- 5.7 BOTÕES --- */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--space-2) var(--space-4);
+  font-size: var(--text-sm);
+  font-weight: 500;
+  border-radius: var(--radius-md);
+  transition: all 0.2s ease;
+  border: 1px solid transparent;
+  /* Prevents layout shift with outline buttons */
+}
+
+/* Tamanhos de Botões */
+.btn-sm {
+  padding: var(--space-1) var(--space-3);
+  font-size: var(--text-xs);
+}
+
+.btn-lg {
+  padding: var(--space-3) var(--space-5);
+  font-size: var(--text-base);
+}
+
+/* Botões Sólidos */
+.btn-primary {
+  background-color: var(--primary);
+  color: #FFFFFF;
+}
+
+.btn-primary:hover {
+  background-color: var(--primary-hover);
+}
+
+.btn-secondary {
+  background-color: var(--bg-base);
+  color: var(--text-main);
+  border-color: var(--border-color);
+}
+
+.btn-secondary:hover {
+  background-color: var(--border-color);
+}
+
+.btn-success {
+  background-color: var(--success);
+  color: #FFFFFF;
+}
+
+.btn-success:hover {
+  filter: brightness(0.9);
+}
+
+.btn-warning {
+  background-color: var(--warning);
+  color: #FFFFFF;
+}
+
+.btn-warning:hover {
+  filter: brightness(0.9);
+}
+
+.btn-danger {
+  background-color: var(--danger);
+  color: #FFFFFF;
+}
+
+.btn-danger:hover {
+  filter: brightness(0.9);
+}
+
+.btn-info {
+  background-color: var(--info);
+  color: #FFFFFF;
+}
+
+.btn-info:hover {
+  filter: brightness(0.9);
+}
+
+/* Botões de Contorno (Outline) */
+.btn-outline-primary {
+  border-color: var(--primary);
+  color: var(--primary);
+  background-color: transparent;
+}
+
+.btn-outline-primary:hover {
+  background-color: rgba(79, 70, 229, 0.1);
+}
+
+/* Alpha primário */
+
+.btn-outline-success {
+  border-color: var(--success);
+  color: var(--success);
+  background-color: transparent;
+}
+
+.btn-outline-success:hover {
+  background-color: rgba(16, 185, 129, 0.1);
+}
+
+.btn-outline-warning {
+  border-color: var(--warning);
+  color: var(--warning);
+  background-color: transparent;
+}
+
+.btn-outline-warning:hover {
+  background-color: rgba(245, 158, 11, 0.1);
+}
+
+.btn-outline-danger {
+  border-color: var(--danger);
+  color: var(--danger);
+  background-color: transparent;
+}
+
+.btn-outline-danger:hover {
+  background-color: rgba(239, 68, 68, 0.1);
+}
+
+.btn-outline-info {
+  border-color: var(--info);
+  color: var(--info);
+  background-color: transparent;
+}
+
+.btn-outline-info:hover {
+  background-color: rgba(59, 130, 246, 0.1);
+}
+
+/* Botão Fantasma (Ghost) */
+.btn-ghost {
+  background-color: transparent;
+  color: var(--text-muted);
+  border-color: transparent;
+}
+
+.btn-ghost:hover {
+  background-color: var(--bg-base);
+  color: var(--text-main);
+}
+
+/* --- 5.8 BADGES (TAGS) --- */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 0.125rem var(--space-2);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  border-radius: var(--radius-full);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.badge-success {
+  background-color: rgba(16, 185, 129, 0.15);
+  color: var(--success);
+}
+
+.badge-warning {
+  background-color: rgba(245, 158, 11, 0.15);
+  color: var(--warning);
+}
+
+.badge-danger {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: var(--danger);
+}
+
+.badge-info {
+  background-color: rgba(59, 130, 246, 0.15);
+  color: var(--info);
+}
+
+.badge-neutral {
+  background-color: var(--border-color);
+  color: var(--text-muted);
+}
+
+@media (prefers-color-scheme: dark) {
+  .badge-success {
+    color: #34D399;
+  }
+
+  /* Ajuste fino de leitura no Dark Mode */
+  .badge-warning {
+    color: #FBBF24;
+  }
+
+  .badge-danger {
+    color: #F87171;
+  }
+
+  .badge-info {
+    color: #60A5FA;
+  }
+}
+
+/* --- 5.9 FORMULÁRIOS --- */
+.form-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-4);
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+  gap: var(--space-1);
+}
+
+.form-group.full-width {
+  grid-column: 1 / -1;
+}
+
+.form-label {
+  font-size: var(--text-sm);
+  font-weight: 500;
+  color: var(--text-main);
+}
+
+.form-control {
+  width: 100%;
+  padding: var(--space-2) var(--space-3);
+  font-size: var(--text-sm);
+  background-color: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius-sm);
+  color: var(--text-main);
+  transition: border-color 0.2s, box-shadow 0.2s;
+  outline: none;
+}
+
+.form-control:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px var(--primary-light);
+}
+
+.form-control::placeholder {
+  color: var(--text-muted);
+}
+
+.form-hint {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+}
+
+/* --- 5.10 TABELAS --- */
+.table-responsive {
+  overflow-x: auto;
+  width: 100%;
+}
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+
+.table th {
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-bottom: 1px solid var(--border-color);
+  background-color: var(--bg-base);
+}
+
+.table td {
+  padding: var(--space-4);
+  font-size: var(--text-sm);
+  border-bottom: 1px solid var(--border-color);
+  color: var(--text-main);
+}
+
+.table tr:last-child td {
+  border-bottom: none;
+}
+
+.table tbody tr:hover {
+  background-color: var(--bg-base);
+}
+
+/* --- 5.11 ALERTAS --- */
+.alert {
+  padding: var(--space-3) var(--space-4);
+  border-radius: var(--radius-md);
+  font-size: var(--text-sm);
+  display: flex;
+  align-items: center;
+  border-left: 4px solid;
+  line-height: 1.4;
+}
+
+/* Alertas com Fundo Suave (Padrão) */
+.alert-primary {
+  background-color: rgba(79, 70, 229, 0.1);
+  border-left-color: var(--primary);
+  color: var(--primary);
+}
+
+.alert-success {
+  background-color: rgba(16, 185, 129, 0.1);
+  border-left-color: var(--success);
+  color: var(--success);
+}
+
+.alert-warning {
+  background-color: rgba(245, 158, 11, 0.1);
+  border-left-color: var(--warning);
+  color: var(--warning);
+  /* Pode ser ajustado para um tom mais escuro dependendo do gosto */
+}
+
+.alert-danger {
+  background-color: rgba(239, 68, 68, 0.1);
+  border-left-color: var(--danger);
+  color: var(--danger);
+}
+
+.alert-info {
+  background-color: rgba(59, 130, 246, 0.1);
+  border-left-color: var(--info);
+  color: var(--info);
+}
+
+/* Alertas Sólidos (Para mensagens de extremo destaque) */
+.alert-solid-success {
+  background-color: var(--success);
+  border-left-color: rgba(0, 0, 0, 0.2);
+  /* Cria um detalhe sutil na borda */
+  color: #FFFFFF;
+}
+
+.alert-solid-danger {
+  background-color: var(--danger);
+  border-left-color: rgba(0, 0, 0, 0.2);
+  color: #FFFFFF;
+}
+
+/* Ajustes finos de contraste para alertas suaves no Dark Mode */
+@media (prefers-color-scheme: dark) {
+  .alert-primary {
+    color: #818CF8;
+  }
+
+  .alert-success {
+    color: #34D399;
+  }
+
+  .alert-warning {
+    color: #FBBF24;
+  }
+
+  .alert-danger {
+    color: #F87171;
+  }
+
+  .alert-info {
+    color: #60A5FA;
+  }
+}
+
+/* --- 5.12 UTILITÁRIOS FLEX --- */
+.flex-row {
+  display: flex;
+  gap: var(--space-3);
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+/* Responsividade básica do Layout */
+@media (max-width: 768px) {
+  .app-layout {
+    flex-direction: column;
+  }
+
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+  }
+
+  .form-grid {
+    grid-template-columns: 1fr;
+  }
 }
