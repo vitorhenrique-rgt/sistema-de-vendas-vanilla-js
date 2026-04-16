@@ -138,9 +138,9 @@ function renderProductList() {
       <td>${product.description}</td>
       <td>${product.cost.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
       <td>${product.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-      <td><button class="delete-product-btn" data-id="${product.id}">Deletar</button></td>
-      <td><button class="update-product-btn" data-id="${product.id}">Alterar</button></td>
-      <td><button class="add-product-btn" data-id="${product.id}">Adicionar</button></td>
+      <td><button class="btn btn-sm btn-danger delete-product-btn" data-id="${product.id}">Deletar</button></td>
+      <td><button class="btn btn-sm btn-info update-product-btn" data-id="${product.id}">Alterar</button></td>
+      <td><button class="btn btn-sm btn-info add-product-btn" data-id="${product.id}">Adicionar</button></td>
     </tr>
     `
   }).join('')
@@ -208,8 +208,8 @@ function renderCart() {
       <td>${item.unitPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
       <td>${item.quantity}</td>
       <td>${(item.unitPrice * item.quantity).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-      <td><button class="delete-item-cart-btn" data-id="${item.productId}">Remover</button></td>
-      <td><button class="add-item-cart-btn" data-id="${item.productId}">Adicionar</button></td>
+      <td><button class="btn btn-sm btn-danger delete-item-cart-btn" data-id="${item.productId}">Remover</button></td>
+      <td><button class="btn btn-sm btn-info add-item-cart-btn" data-id="${item.productId}">Adicionar</button></td>
     </tr>
     `
   }).join('')
@@ -219,8 +219,8 @@ function renderCart() {
   <td colspan="3">Total</td>
   <td>${cart.totalItems}</td>
   <td>${cart.totalValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-  <td><button class="add-sale-btn">Finalizar</button></td>
-  <td><button class="cancel-sale-btn">Cancelar</button></td>
+  <td><button class="btn btn-sm btn-success add-sale-btn">Finalizar</button></td>
+  <td><button class="btn btn-sm btn-danger  cancel-sale-btn">Cancelar</button></td>
   </tr>
   `
   cartTableList.innerHTML = cartItemsList + totalsTableRow

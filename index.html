@@ -10,96 +10,119 @@
 </head>
 
 <body>
-  <header class="header">
-    <div class="logo">
-      <img src="" alt="Logo">
-      <h1>Sistema de vendas</h1>
+  <div class="app-layout">
+    <aside class="sidebar">
+      <div class="sidebar-logo">
+        <h1>Vanilla JS</h1>
+        <p>Sistema de vendas</p>
+      </div>
+      <nav class="sidebar-menu">
+        <a href="#" class="menu-item">Dashboard</a>
+        <a href="#" class="menu-item active">Produtos</a>
+        <a href="#" class="menu-item">Carrinho</a>
+        <a href="#" class="menu-item">Configurações</a>
+      </nav>
+    </aside>
+    <div class="main-wrapper">
+      <header class="header">
+        <div class="header-content">
+          <p class="h4">Produtos</p>
+          <div class="header-actions">
+            <div class="avatar">U</div>
+            <span>Usuário</span>
+          </div>
+        </div>
+      </header>
+      <main class="main-content container">
+        <div id="dashboard">
+        </div>
+
+        <div id="products">
+          <section class="section-block" id="product-registration">
+            <div class="card">
+              <div class="card-header">
+                <p class="h5">Novo Produto</p>
+              </div>
+              <div class="card-body">
+                <form class="form-grid" action="" id="product-form">
+                  <div class="form-group">
+                    <label class="form-label" for="product-name">Nome</label>
+                    <input class="form-control" type="text" name="name" id="product-name" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="product-description">Descrição</label>
+                    <input class="form-control" type="text" name="description" id="product-description">
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="product-cost">Custo</label>
+                    <input class="form-control" type="number" name="cost" id="product-cost" step="0.01" required>
+                  </div>
+                  <div class="form-group">
+                    <label class="form-label" for="product-price">Preço</label>
+                    <input class="form-control" type="number" name="price" id="product-price" step="0.01" required>
+                  </div>
+                  <div class="form-group full-width">
+                    <div class="divider"></div>
+                    <input class="btn btn-primary" type="submit" value="Salvar" id="product-submit">
+                  </div>
+                </form>
+              </div>
+            </div>
+          </section>
+          <br>
+          <section class="section-block" id="product-list">
+            <div class="card">
+              <div class="table-responsive">
+                <table class="table" id="product-table">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Nome</th>
+                      <th>Descrição</th>
+                      <th>Custo</th>
+                      <th>Preço</th>
+                      <th colspan="3">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+        </div>
+        <br>
+        <div id="cart">
+          <section class="section-block" id="shopping-cart">
+            <div class="card">
+              <div class="table-responsive">
+                <table class="table" id="cart-items-table" style="border-collapse: collapse; max-width: 100%;">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Nome</th>
+                      <th>Qtd</th>
+                      <th>Preço Uni.</th>
+                      <th>Total</th>
+                      <th colspan="2">Ações</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </section>
+        </div>
+        <br>
+      </main>
+      <footer class="footer">
+        <div class="container text-center text-sm text-muted">
+          &copy; 2026 Vanilla JS - Sistema de Vendas. Todos os direitos reservados.
+        </div>
+      </footer>
     </div>
-    <div class="user-info">
-      <img src="" alt="Avatar">
-      <span>Nome Usuário</span>
-    </div>
-  </header>
-  <aside class="menu">
-    <nav>
-      <ul>
-        <li>Dashboard</li>
-        <li>Produtos</li>
-        <li>Carrinho</li>
-        <li>Configurações</li>
-      </ul>
-    </nav>
-  </aside>
-  <main>
-    <div id="dashboard">
-      dashboard aqui
-    </div>
-    <br>
-    <div id="products">
-      <section id="product-registration">
-        <form action="" id="product-form">
-          <fieldset>
-            <legend>Adicionar Produto</legend>
-
-            <label for="product-name">Nome</label>
-            <input type="text" name="name" id="product-name" required>
-
-            <label for="product-description">Descrição</label>
-            <input type="text" name="description" id="product-description">
-
-            <label for="product-cost">Custo</label>
-            <input type="number" name="cost" id="product-cost" step="0.01" required>
-
-            <label for="product-price">Preço</label>
-            <input type="number" name="price" id="product-price" step="0.01" required>
-
-            <input type="submit" value="Salvar" id="product-submit">
-
-          </fieldset>
-        </form>
-      </section>
-      <br>
-      <section id="product-list">
-        <table id="product-table">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Nome</th>
-              <th>Descrição</th>
-              <th>Custo</th>
-              <th>Preço</th>
-              <th colspan="3">Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
-      </section>
-    </div>
-    <br>
-    <div id="cart">
-      <section id="shopping-cart">
-        <table id="cart-items-table" style="border-collapse: collapse; max-width: 100%;">
-          <thead>
-            <tr>
-              <th>#</th>
-              <th>Nome</th>
-              <th>Qtd</th>
-              <th>Preço Uni.</th>
-              <th>Total</th>
-              <th colspan="2">Ações</th>
-            </tr>
-          </thead>
-          <tbody>
-          </tbody>
-        </table>
-      </section>
-    </div>
-    <br>
-  </main>
-  <footer>
-    Sistema de Vendas. Todos os direitos reservados
-  </footer>
+  </div>
 </body>
 
 </html>
