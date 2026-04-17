@@ -5,7 +5,9 @@ const productCostInput = document.getElementById('product-cost')
 const productPriceInput = document.getElementById('product-price')
 const productTable = document.getElementById('product-table')
 const productTableList = productTable.querySelector('tbody')
-const cartTableList = document.querySelector("#cart-items-table tbody")
+const cartTable = document.querySelector("#cart-items-table")
+const cartTableList = cartTable.querySelector("tbody")
+const cartTableTotals = cartTable.querySelector("tfoot")
 
 let products = []
 let editingProductId = null
@@ -19,7 +21,6 @@ function fetchProductsData() {
   const productData = localStorage.getItem("productsData")
   if (productData !== null) {
     products = JSON.parse(productData)
-    console.log(products)
   } else {
     console.log("Dados não encontrados")
   }
@@ -100,8 +101,13 @@ function deleteProduct(id) {
 //FIND PRODUCT
 function findProduct(productId) {
   const productFound = products.find(product => product.id === productId)
-  return productFound
-}
+  if (productFound) {
+    return productFound
+  }else{
+    console.log("Produto não encontrado")
+    return
+    }
+  }
 
 //HANDLE PRODUCT FORM
 function handleProductFormClick(id) {
@@ -194,8 +200,8 @@ function renderCart() {
     <tr>
       <td>${index + 1}</td>
       <td>${product.name}</td>
-      <td>${item.unitPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
       <td>${item.quantity}</td>
+      <td>${item.unitPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
       <td>${(item.unitPrice * item.quantity).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
       <td><button class="btn btn-sm btn-danger delete-item-cart-btn" data-id="${item.productId}">Remover</button></td>
       <td><button class="btn btn-sm btn-info add-item-cart-btn" data-id="${item.productId}">Adicionar</button></td>
@@ -204,15 +210,17 @@ function renderCart() {
   }).join('')
 
   const totalsTableRow = `
-  <tr style="border-top: 2px solid black;">
-  <td colspan="3">Total</td>
+  <tr>
+  <td colspan="2">Total</td>
   <td>${cart.totalItems}</td>
+  <td></td>
   <td>${cart.totalValue.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+  <td><button class="btn btn-sm btn-danger cancel-sale-btn">Cancelar</button></td>
   <td><button class="btn btn-sm btn-success add-sale-btn">Finalizar</button></td>
-  <td><button class="btn btn-sm btn-danger  cancel-sale-btn">Cancelar</button></td>
   </tr>
   `
-  cartTableList.innerHTML = cartItemsList + totalsTableRow
+  cartTableList.innerHTML = cartItemsList
+  cartTableTotals.innerHTML = totalsTableRow
 }
 
 
@@ -223,7 +231,7 @@ function createSale() {
   if (cart.items.length > 0) {
     const saleCompleted = {
       id: crypto.randomUUID(),
-      createdAt: new Date(),
+      createdAt: new Date().toISOString(),
       total: cart.totalValue,
       items: cart.items.map(item => {
         const product = findProduct(item.productId)
@@ -279,7 +287,7 @@ function cleanCart() {
 
 //----------------------EVENT LISTENERS-------------------------------
 //LISTENER CART TABLE
-cartTableList.addEventListener('click', e => {
+cartTable.addEventListener('click', e => {
   if (e.target.classList.contains('delete-item-cart-btn')) {
     const id = e.target.dataset.id
     removeItemCart(id)

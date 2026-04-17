@@ -669,6 +669,16 @@ a {
   background-color: var(--bg-base);
 }
 
+.table tfoot {
+  padding: var(--space-3) var(--space-4);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  border-top: 1px solid var(--border-color);
+  background-color: var(--bg-base);
+}
+
 /* --- 5.11 ALERTAS --- */
 .alert {
   padding: var(--space-3) var(--space-4);
