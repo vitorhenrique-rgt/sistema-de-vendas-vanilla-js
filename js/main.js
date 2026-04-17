@@ -52,18 +52,7 @@ function fetchSalesData() {
 
 //PUSH DATA
 function pushData(data, nameDataBase) {
-  let dataBase
-  switch (nameDataBase) {
-    case "productsData":
-      dataBase = nameDataBase
-      break;
-    case "salesData":
-      dataBase = nameDataBase
-      break;
-    default:
-      break;
-  }
-  localStorage.setItem(dataBase, JSON.stringify(data))
+  localStorage.setItem(nameDataBase, JSON.stringify(data))
 }
 
 
@@ -104,6 +93,7 @@ function updateProduct(id) {
 function deleteProduct(id) {
   const updatedProducts = products.filter(product => product.id !== id)
   products = updatedProducts
+  pushData(products, "productsData")
   renderProductList()
 }
 
@@ -123,7 +113,6 @@ function handleProductFormClick(id) {
     } else {
       updateProduct(id)
     }
-    fetchProductsData()
     renderProductList()
   }
 }
@@ -172,6 +161,7 @@ function removeItemCart(id) {
   const updatedCart = cart.items.filter(item => item.productId !== id)
   cart.items = updatedCart
   calculateTotalsCart()
+  pushCartData(cart)
   renderCart()
 }
 
@@ -193,7 +183,6 @@ function handleItemCartClick(productId, quantity) {
   }
   calculateTotalsCart()
   pushCartData(cart)
-  fetchCartData()
   renderCart()
 }
 
@@ -249,7 +238,6 @@ function createSale() {
     sales.push(saleCompleted)
     pushData(sales, "salesData")
     cleanCart()
-    fetchSalesData()
     renderCart()
   } else {
     console.log("Não há itens no carrinho")
@@ -259,7 +247,6 @@ function createSale() {
 //CANCEL SALE
 function cancelSale() {
   cleanCart()
-  fetchCartData()
   renderCart()
 }
 
