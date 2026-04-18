@@ -31,7 +31,6 @@ function fetchCartData() {
   const cartData = sessionStorage.getItem("cartData")
   if (cartData !== null) {
     cart = JSON.parse(cartData)
-    console.log(cart)
   } else {
     cart = { totalItems: 0, totalValue: 0, items: [] }
     console.log("Carrinho vazio")
@@ -62,6 +61,8 @@ function pushCartData(data) {
   sessionStorage.setItem("cartData", JSON.stringify(data))
 }
 
+
+
 //-----------------------PRODUCTS-----------------------
 //ADD PRODUCT
 function addProduct() {
@@ -73,7 +74,6 @@ function addProduct() {
     price: Number(productPriceInput.value)
   }
   products.push(product)
-  pushData(products, "productsData")
 }
 
 //UPDATE PRODUCT
@@ -87,30 +87,28 @@ function updateProduct(id) {
     } : product
   )
   products = updatedProducts
-  pushData(products, "productsData")
 }
 
 //DELETE PRODUCT
 function deleteProduct(id) {
-  const updatedProducts = products.filter(product => product.id !== id)
-  products = updatedProducts
-  pushData(products, "productsData")
-  renderProductList()
+  const itemCart = cart.items.find(item => item.productId === id)
+  console.log(itemCart)
+  if (itemCart) {
+    console.log("Modal com mensagem de aviso que o produto está no carrinho")
+  } else {
+    const updatedProducts = products.filter(product => product.id !== id)
+    products = updatedProducts
+  }
 }
 
 //FIND PRODUCT
 function findProduct(productId) {
   const productFound = products.find(product => product.id === productId)
-  if (productFound) {
-    return productFound
-  }else{
-    console.log("Produto não encontrado")
-    return
-    }
-  }
+  return productFound
+}
 
 //HANDLE PRODUCT FORM
-function handleProductFormClick(id) {
+function handleProductForm(id) {
   if (productNameInput.value === "" || productCostInput.value === "" || productPriceInput.value === "") {
     console.log("Campos Obrigatórios")
   } else {
@@ -119,7 +117,6 @@ function handleProductFormClick(id) {
     } else {
       updateProduct(id)
     }
-    renderProductList()
   }
 }
 
@@ -134,7 +131,7 @@ function renderProductList() {
       <td>${product.cost.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
       <td>${product.price.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
       <td><button class="btn btn-sm btn-danger delete-product-btn" data-id="${product.id}">Deletar</button></td>
-      <td><button class="btn btn-sm btn-info update-product-btn" data-id="${product.id}">Alterar</button></td>
+      <td><button class="btn btn-sm btn-info update-product-btn" data-id="${product.id}">Editar</button></td>
       <td><button class="btn btn-sm btn-info add-product-btn" data-id="${product.id}">Adicionar</button></td>
     </tr>
     `
@@ -148,12 +145,17 @@ function renderProductList() {
 //-----------------------CART-----------------------
 //ADD ITEM TO CART
 function addItemToCart(productId, quantity) {
-  const productItem = {
-    productId: productId,
-    quantity: quantity,
-    unitPrice: findProduct(productId).price
+  const productFound = findProduct(productId)
+  if (productFound) {
+    const productItem = {
+      productId: productId,
+      quantity: quantity,
+      unitPrice: productFound.price
+    }
+    cart.items.push(productItem)
+  } else {
+    console.log("Produto não encontrado")
   }
-  cart.items.push(productItem)
 }
 
 // UPDATE ITEM CART
@@ -166,9 +168,6 @@ function updateItemCart(productId, quantity) {
 function removeItemCart(id) {
   const updatedCart = cart.items.filter(item => item.productId !== id)
   cart.items = updatedCart
-  calculateTotalsCart()
-  pushCartData(cart)
-  renderCart()
 }
 
 //CALCULATE TOTALS CART
@@ -180,33 +179,32 @@ function calculateTotalsCart() {
 }
 
 //HANDLE ITEM CART
-function handleItemCartClick(productId, quantity) {
+function handleItemCart(productId, quantity) {
   const index = cart.items.findIndex(item => item.productId === productId)
   if (index < 0) {
     addItemToCart(productId, quantity)
   } else {
     updateItemCart(productId, quantity)
   }
-  calculateTotalsCart()
-  pushCartData(cart)
-  renderCart()
 }
 
 //SHOW CART
 function renderCart() {
   const cartItemsList = cart.items.map((item, index) => {
     const product = findProduct(item.productId)
-    return `
-    <tr>
-      <td>${index + 1}</td>
-      <td>${product.name}</td>
-      <td>${item.quantity}</td>
-      <td>${item.unitPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-      <td>${(item.unitPrice * item.quantity).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
-      <td><button class="btn btn-sm btn-danger delete-item-cart-btn" data-id="${item.productId}">Remover</button></td>
-      <td><button class="btn btn-sm btn-info add-item-cart-btn" data-id="${item.productId}">Adicionar</button></td>
-    </tr>
-    `
+    if (product) {
+      return `
+      <tr>
+        <td>${index + 1}</td>
+        <td>${product.name}</td>
+        <td>${item.quantity}</td>
+        <td>${item.unitPrice.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+        <td>${(item.unitPrice * item.quantity).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' })}</td>
+        <td><button class="btn btn-sm btn-danger delete-item-cart-btn" data-id="${item.productId}">Remover</button></td>
+        <td><button class="btn btn-sm btn-info add-item-cart-btn" data-id="${item.productId}">Adicionar</button></td>
+      </tr>
+      `
+    }
   }).join('')
 
   const totalsTableRow = `
@@ -235,27 +233,20 @@ function createSale() {
       total: cart.totalValue,
       items: cart.items.map(item => {
         const product = findProduct(item.productId)
-        return {
-          productId: item.productId,
-          productName: product.name,
-          productPrice: product.price,
-          productQuantity: item.quantity
+        if (product) {
+          return {
+            productId: item.productId,
+            productName: product.name,
+            productPrice: product.price,
+            productQuantity: item.quantity
+          }
         }
       })
     }
     sales.push(saleCompleted)
-    pushData(sales, "salesData")
-    cleanCart()
-    renderCart()
   } else {
     console.log("Não há itens no carrinho")
   }
-}
-
-//CANCEL SALE
-function cancelSale() {
-  cleanCart()
-  renderCart()
 }
 
 
@@ -288,39 +279,61 @@ function cleanCart() {
 //----------------------EVENT LISTENERS-------------------------------
 //LISTENER CART TABLE
 cartTable.addEventListener('click', e => {
-  if (e.target.classList.contains('delete-item-cart-btn')) {
-    const id = e.target.dataset.id
-    removeItemCart(id)
-  } else if (e.target.classList.contains('add-item-cart-btn')) {
-    const id = e.target.dataset.id
-    handleItemCartClick(id, 1)
-  } else if (e.target.classList.contains('add-sale-btn')) {
+  if (e.target.classList.contains('add-sale-btn')) {
     createSale()
-  } else if (e.target.classList.contains('cancel-sale-btn')) {
-    cancelSale()
+    pushData(sales, "salesData")
+    cleanCart()
+    renderCart()
+  } else {
+
+    if (e.target.classList.contains('add-item-cart-btn')) {
+      const id = e.target.dataset.id
+      handleItemCart(id, 1)
+    } else if (e.target.classList.contains('delete-item-cart-btn')) {
+      const id = e.target.dataset.id
+      removeItemCart(id)
+    } else if (e.target.classList.contains('cancel-sale-btn')) {
+      cleanCart()
+    }
+    calculateTotalsCart()
+    pushCartData(cart)
+    renderCart()
   }
 })
 
 //LISTENER PRODUCT TABLE
 productTable.addEventListener('click', e => {
-  if (e.target.classList.contains('delete-product-btn')) {
+  if (e.target.classList.contains('add-product-btn')) {
     const id = e.target.dataset.id
-    deleteProduct(id)
-  } else if (e.target.classList.contains('update-product-btn')) {
-    editingProductId = e.target.dataset.id
-    fillProductForm(editingProductId)
-  } else if (e.target.classList.contains('add-product-btn')) {
-    const id = e.target.dataset.id
-    handleItemCartClick(id, 1)
+    handleItemCart(id, 1)
+    calculateTotalsCart()
+    pushCartData(cart)
+    renderCart()
+  } else {
+
+    if (e.target.classList.contains('update-product-btn')) {
+      editingProductId = e.target.dataset.id
+      fillProductForm(editingProductId)
+
+    } else if (e.target.classList.contains('delete-product-btn')) {
+      const id = e.target.dataset.id
+      deleteProduct(id)
+    }
+    pushData(products, "productsData")
+    renderProductList()
   }
 })
 
 //LISTENER PRODUCT FORM
 productForm.addEventListener('submit', (e) => {
   e.preventDefault()
-  handleProductFormClick(editingProductId)
+  handleProductForm(editingProductId)
+  pushData(products, "productsData")
+  renderProductList()
   cleanProductForm()
 })
+
+
 fetchProductsData()
 fetchCartData()
 fetchSalesData()
