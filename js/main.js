@@ -22,7 +22,7 @@ function fetchProductsData() {
   if (productData !== null) {
     products = JSON.parse(productData)
   } else {
-    console.log("Dados não encontrados")
+    alert("Produtos não encontrados")
   }
 }
 
@@ -31,9 +31,9 @@ function fetchCartData() {
   const cartData = sessionStorage.getItem("cartData")
   if (cartData !== null) {
     cart = JSON.parse(cartData)
+    checkCart()
   } else {
     cart = { totalItems: 0, totalValue: 0, items: [] }
-    console.log("Carrinho vazio")
   }
 
 }
@@ -43,11 +43,7 @@ function fetchSalesData() {
   const salesData = localStorage.getItem("salesData")
   if (salesData !== null) {
     sales = JSON.parse(salesData)
-    console.log(sales)
-  } else {
-    console.log("Dados não encontrados")
   }
-
 }
 
 //PUSH DATA
@@ -94,7 +90,7 @@ function deleteProduct(id) {
   const itemCart = cart.items.find(item => item.productId === id)
   console.log(itemCart)
   if (itemCart) {
-    console.log("Modal com mensagem de aviso que o produto está no carrinho")
+    alert("Produto vinculado ao carrinho de compras! Verifique antes de continuar")
   } else {
     const updatedProducts = products.filter(product => product.id !== id)
     products = updatedProducts
@@ -110,7 +106,7 @@ function findProduct(productId) {
 //HANDLE PRODUCT FORM
 function handleProductForm(id) {
   if (productNameInput.value === "" || productCostInput.value === "" || productPriceInput.value === "") {
-    console.log("Campos Obrigatórios")
+    alert("Os campos NOME, CUSTO e VALOR são obrigatórios ")
   } else {
     if (id === null) {
       addProduct()
@@ -154,7 +150,7 @@ function addItemToCart(productId, quantity) {
     }
     cart.items.push(productItem)
   } else {
-    console.log("Produto não encontrado")
+    alert("Produto não encontrado!")
   }
 }
 
@@ -187,6 +183,18 @@ function handleItemCart(productId, quantity) {
     updateItemCart(productId, quantity)
   }
 }
+
+//CHECK CART
+function checkCart(){
+const itemsCartChecked = cart.items.filter(item=> item.productId === findProduct(item.productId)?.id)
+ if(itemsCartChecked.length < cart.items.length ){
+   alert("Ouve uma alteração nos itens do seu carrinho, verifique antes de continuar")
+   cart.items = itemsCartChecked
+   calculateTotalsCart()
+   pushCartData(cart)
+ }
+}
+
 
 //SHOW CART
 function renderCart() {
@@ -226,6 +234,7 @@ function renderCart() {
 //-----------------------------SALES------------------------------
 //ADD SALE
 function createSale() {
+  checkCart()
   if (cart.items.length > 0) {
     const saleCompleted = {
       id: crypto.randomUUID(),
@@ -245,7 +254,7 @@ function createSale() {
     }
     sales.push(saleCompleted)
   } else {
-    console.log("Não há itens no carrinho")
+    alert("Não há itens no carrinho")
   }
 }
 
