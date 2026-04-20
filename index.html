@@ -125,6 +125,24 @@
       </footer>
     </div>
   </div>
+  <dialog id="modal-dialog" class="modal-dialog">
+    <div class="card">
+      <div id="modalHeader" class="card-header">
+        <h3 id="modalTitle" class="h4">Título do Alerta</h3>
+      </div>
+
+      <div class="card-body">
+        <p id="modalMessage" class="text-main">Sua mensagem aparecerá aqui.</p>
+      </div>
+
+      <div class="card-footer">
+        <div class="flex-row" style="justify-content: flex-end; width: 100%;">
+          <button id="modalCloseBtn" type="button" class="btn btn-secondary" onclick="closeModal()">Fechar</button>
+          <button id="modalConfirmBtn" type="button" class="btn btn-primary" onclick="closeModal()">Confirmar</button>
+        </div>
+      </div>
+    </div>
+  </dialog>
 </body>
 
 </html>

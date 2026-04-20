@@ -326,6 +326,22 @@ a {
   color: var(--text-muted);
 }
 
+.text-success {
+  color: var(--success);
+}
+
+.text-warning {
+  color: var(--warning);
+}
+
+.text-danger {
+  color: var(--danger);
+}
+
+.text-info {
+  color: var(--info);
+}
+
 .text-sm {
   font-size: var(--text-sm);
 }
@@ -759,7 +775,71 @@ a {
   }
 }
 
-/* --- 5.12 UTILITÁRIOS FLEX --- */
+/* --- 5.13 MODAL (Dialog) --- */
+.modal-dialog {
+  margin: auto;
+  border: none;
+  border-radius: var(--radius-lg);
+  padding: 0;
+  width: 90%;
+  max-width: 500px;
+  background: transparent;
+  box-shadow: var(--shadow-lg);
+}
+
+.modal-title-wrapper {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+}
+
+.modal-icon {
+  font-size: var(--text-xl);
+  line-height: 1;
+}
+
+/* Pseudo-elemento para o fundo escurecido */
+.modal-dialog::backdrop {
+  background-color: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(2px);
+}
+
+/* Animação de entrada */
+.modal-dialog[open] {
+  animation: modalFadeIn 0.3s ease-out;
+}
+
+@keyframes modalFadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(-20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Variantes de cores para o header do modal */
+.modal-header-success {
+  border-bottom: 1px solid var(--success) !important;
+}
+
+.modal-header-danger {
+  border-bottom: 1px solid var(--danger) !important;
+}
+
+.modal-header-warning {
+  border-bottom: 1px solid var(--warning) !important;
+}
+
+.modal-header-info {
+  border-bottom: 1px solid var(--info) !important;
+}
+
+
+/* --- 5.13 UTILITÁRIOS FLEX --- */
 .flex-row {
   display: flex;
   gap: var(--space-3);

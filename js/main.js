@@ -1,3 +1,4 @@
+const modalDialog = document.getElementById('modal-dialog')
 const productForm = document.getElementById('product-form')
 const productNameInput = document.getElementById('product-name')
 const productDescriptionInput = document.getElementById('product-description')
@@ -90,7 +91,9 @@ function deleteProduct(id) {
   const itemCart = cart.items.find(item => item.productId === id)
   console.log(itemCart)
   if (itemCart) {
-    alert("Produto vinculado ao carrinho de compras! Verifique antes de continuar")
+    const message = "Produto vinculado ao carrinho de compras! Verifique antes de continuar"
+    const type = "danger"
+    showModal(message, type)
   } else {
     const updatedProducts = products.filter(product => product.id !== id)
     products = updatedProducts
@@ -185,14 +188,14 @@ function handleItemCart(productId, quantity) {
 }
 
 //CHECK CART
-function checkCart(){
-const itemsCartChecked = cart.items.filter(item=> item.productId === findProduct(item.productId)?.id)
- if(itemsCartChecked.length < cart.items.length ){
-   alert("Ouve uma alteração nos itens do seu carrinho, verifique antes de continuar")
-   cart.items = itemsCartChecked
-   calculateTotalsCart()
-   pushCartData(cart)
- }
+function checkCart() {
+  const itemsCartChecked = cart.items.filter(item => item.productId === findProduct(item.productId)?.id)
+  if (itemsCartChecked.length < cart.items.length) {
+    alert("Ouve uma alteração nos itens do seu carrinho, verifique antes de continuar")
+    cart.items = itemsCartChecked
+    calculateTotalsCart()
+    pushCartData(cart)
+  }
 }
 
 
@@ -285,6 +288,43 @@ function cleanCart() {
 
 
 
+function showModal(message, type = 'info') {
+  const modalTitle = document.getElementById('modalTitle')
+  const modalMessage = document.getElementById('modalMessage')
+  const modalHeader = document.getElementById('modalHeader')
+  const modalCloseBtn = document.getElementById('modalCloseBtn')
+  const modalConfirmBtn = document.getElementById('modalConfirmBtn')
+
+  // Reset de classes de cor
+  modalHeader.classList.remove('modal-header-success', 'modal-header-danger', 'modal-header-warning', 'modal-header-info')
+  modalTitle.className = 'h4'
+  modalConfirmBtn.className = 'btn' // Reset classes do botão
+  const config = {
+    success: { class: 'text-success', icon: '✓', title: "Tudo certo!" },
+    danger: { class: 'text-danger', icon: '✕', title: "Ops, algo deu errado" },
+    warning: { class: 'text-warning', icon: '⚠', title: "Atenção necessária" },
+    info: { class: 'text-info', icon: 'ℹ', title: "Dica importante" }
+  };
+
+  const current = config[type] || config.info;
+  // 3. Atualiza o DOM
+  modalHeader.classList.add(`modal-header-${type}`);
+  modalTitle.classList.add(current.class);
+
+  // Insere título com ícone
+  modalTitle.innerHTML = `<span class="modal-icon">${current.icon}</span> ${current.title}`;
+  modalMessage.innerText = message;
+
+  // Atualiza botão principal
+  modalConfirmBtn.className = `btn btn-${type}`;
+  modalDialog.showModal()
+}
+
+function closeModal() {
+  modalDialog.close()
+}
+
+
 //----------------------EVENT LISTENERS-------------------------------
 //LISTENER CART TABLE
 cartTable.addEventListener('click', e => {
@@ -341,6 +381,10 @@ productForm.addEventListener('submit', (e) => {
   renderProductList()
   cleanProductForm()
 })
+
+modalDialog.addEventListener('click', (e) => {
+  if (e.target === modalDialog) modalDialog.close();
+});
 
 
 fetchProductsData()
